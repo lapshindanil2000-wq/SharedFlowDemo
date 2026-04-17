@@ -18,6 +18,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.SharedFlow
 import com.example.sharedflowdemo.ui.theme.SharedFlowDemoTheme
@@ -53,8 +55,11 @@ fun MainScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(key1 = Unit) {
-        sharedFlow.collect { value ->
-            messages.add(value)
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            sharedFlow.collect { value ->
+                println("Collecting $value")
+                messages.add(value)
+            }
         }
     }
 
